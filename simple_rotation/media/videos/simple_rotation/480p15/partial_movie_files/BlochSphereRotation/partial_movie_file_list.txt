@@ -1,0 +1,3 @@
+# This file is used internally by FFMPEG.
+file 'file:/Users/matteotex/Documents/Data/2025/02/20250214/manim/simple_rotation/media/videos/simple_rotation/480p15/partial_movie_files/BlochSphereRotation/1121228674_3945819659_2558402414.mp4'
+file 'file:/Users/matteotex/Documents/Data/2025/02/20250214/manim/simple_rotation/media/videos/simple_rotation/480p15/partial_movie_files/BlochSphereRotation/3953065503_3494816192_1784701687.mp4'
