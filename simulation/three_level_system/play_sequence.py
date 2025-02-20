@@ -4,8 +4,8 @@ from tqdm import tqdm
 
 
 def play_timetrace_3levels(
-    omega: float,
     time_vec: np.ndarray,
+    omega: float,
     Omega_R_eg: np.ndarray,
     Omega_R_fg: np.ndarray,
     omega_e: float,
@@ -18,13 +18,16 @@ def play_timetrace_3levels(
     c[2,:] = timetrace of c_g
     Initial state : c[:,0]=[0,0,1], ground state
     """
-    c_timetrace = np.zeros((3, len(time_vec)), dtype=np.complex_)
+    c_timetrace = np.zeros((3, len(time_vec)), dtype=np.complex128)
     c_timetrace[2, 0] = 1
+    phase = 0
     for i in range(1, len(time_vec)):
-        comp_exp = np.exp(1j * omega * time_vec[i])
+        dt = time_vec[i] - time_vec[i - 1]
+        phase += dt * omega[i]
+        comp_exp = np.exp(1j * phase)
         comp_exp = comp_exp + np.conj(comp_exp)
         H_mat = (
-            (time_vec[i] - time_vec[i - 1])
+            dt
             * (-0.5j)
             * np.array(
                 [
@@ -44,8 +47,8 @@ def play_timetrace_3levels(
 
 
 def play_timetrace_3levels_decimate(
-    omega: float,
     time_vec: np.ndarray,
+    omega: np.ndarray,
     Omega_R_eg: np.ndarray,
     Omega_R_fg: np.ndarray,
     omega_e: float,
@@ -59,14 +62,19 @@ def play_timetrace_3levels_decimate(
     c[2,:] = timetrace of c_g
     Initial state : c[:,0]=[0,0,1], ground state
     """
-    c = np.complex_([0, 0, 1])
+    c = np.complex128([1e-2, 1e-2, 1])
     timetrace = []
     framecount = 0
+    phase = 0
+    time_decimate = []
+    phase_decimate = []
     for i in tqdm(range(1, len(time_vec))):
-        comp_exp = np.exp(1j * omega * time_vec[i])
+        dt = time_vec[i] - time_vec[i - 1]
+        phase += dt * omega[i]
+        comp_exp = np.exp(1j * phase)
         comp_exp = comp_exp + np.conj(comp_exp)
         H_mat = (
-            (time_vec[i] - time_vec[i - 1])
+            dt
             * (-0.5j)
             * np.array(
                 [
@@ -81,26 +89,32 @@ def play_timetrace_3levels_decimate(
             )
         )
         c = c + np.dot(H_mat, c)
-        #  c = c / np.abs(np.linalg.norm(c))
+        c = c / np.abs(np.linalg.norm(c))
         if framecount % save_every_nframes == 0:
             timetrace.append(c)
-            framecount = 0
+            time_decimate.append(time_vec[i])
+            phase_decimate.append(phase)
         framecount += 1
-    return np.array(timetrace).T
+    return np.array(time_decimate), np.array(phase_decimate), np.array(timetrace).T
 
 
-def concatenate_sequences(detunings, phases, times, Omega_Rs):
-    detuning = np.array([])
-    phase = np.array([])
+def concatenate_sequences(
+    time_vecs: np.ndarray,
+    omegas: np.array,
+    Omega_R_egs: np.ndarray,
+    Omega_R_fgs: np.ndarray,
+):
     time = np.array([])
-    Omega_R = np.array([])
-    for d, p, t, o in zip(detunings, phases, times, Omega_Rs):
-        detuning = np.append(detuning, d)
-        phase = np.append(phase, p)
+    omega = np.array([])
+    Omega_R_eg = np.array([])
+    Omega_R_fg = np.array([])
+    for t, o, o1, o2 in zip(time_vecs, omegas, Omega_R_egs, Omega_R_fgs):
         time = np.append(time, t + (0 if time.shape[0] == 0 else np.max(time)))
-        Omega_R = np.append(Omega_R, o)
+        omega = np.append(omega, o)
+        Omega_R_eg = np.append(Omega_R_eg, o1)
+        Omega_R_fg = np.append(Omega_R_fg, o2)
 
-    return detuning, phase, time, Omega_R
+    return time, omega, Omega_R_fg, Omega_R_fg
 
 
 if __name__ == "__main__":

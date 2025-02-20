@@ -1,0 +1,4 @@
+# This file is used internally by FFMPEG.
+file 'file:/Users/matteotex/Documents/VSC/matteotex/manim_bloch/simulation/three_level_system/manim_ramsey/media/videos/ramsey_traj/480p15/partial_movie_files/BlochSphereTrajectory/3028389898_548731573_1976803480.mp4'
+file 'file:/Users/matteotex/Documents/VSC/matteotex/manim_bloch/simulation/three_level_system/manim_ramsey/media/videos/ramsey_traj/480p15/partial_movie_files/BlochSphereTrajectory/99950615_4116548519_3483982101.mp4'
+file 'file:/Users/matteotex/Documents/VSC/matteotex/manim_bloch/simulation/three_level_system/manim_ramsey/media/videos/ramsey_traj/480p15/partial_movie_files/BlochSphereTrajectory/99950615_789064381_862684692.mp4'
